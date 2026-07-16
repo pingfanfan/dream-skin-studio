@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "luminous-tundra",
+  "name": "夜光苔原",
+  "petId": "lumen-critter",
+  "accent": "#55e6c1",
+  "panel": "#121b27",
+  "text": "#edfaff",
+  "background": "radial-gradient(circle at 74% 28%, #4e2a75 0 4%, transparent 24%), radial-gradient(circle at 25% 80%, #0e816f 0 2%, transparent 28%), linear-gradient(145deg, #07121a 0%, #102838 52%, #171127 100%)",
+  "mode": "default"
+}

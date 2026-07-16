@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "dialup-chatroom",
+  "name": "拨号聊天室",
+  "petId": "signal-bubble",
+  "accent": "#1689c9",
+  "panel": "#dce8ef",
+  "text": "#102b3b",
+  "background": "repeating-linear-gradient(0deg, rgba(255,255,255,.18) 0 1px, transparent 1px 4px), radial-gradient(circle at 82% 18%, #f4ff9a 0 3%, transparent 16%), linear-gradient(145deg, #9fdcff 0%, #d8f5ff 42%, #d9d8c8 73%, #8db6c9 100%)",
+  "mode": "retro-messenger"
+}

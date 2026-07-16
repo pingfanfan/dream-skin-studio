@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "paper-orbit",
+  "name": "纸片轨道站",
+  "petId": "paper-bot",
+  "accent": "#d66f45",
+  "panel": "#fff2db",
+  "text": "#38281f",
+  "background": "radial-gradient(circle at 78% 25%, #d66f45 0 6%, transparent 6.5%), radial-gradient(circle at 76% 25%, transparent 0 12%, #6d9b8d 12.5% 13.5%, transparent 14%), linear-gradient(150deg, #f5e4be 0%, #e9c99d 52%, #9bb5a6 100%)",
+  "mode": "default"
+}

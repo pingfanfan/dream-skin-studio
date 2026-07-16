@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="一句话为 Codex 换上原创皮肤和配套桌宠。">
+    <title>Dream Skin Studio</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23141a28'/%3E%3Ccircle cx='32' cy='32' r='17' fill='%2384a9ff'/%3E%3Ccircle cx='25' cy='28' r='3' fill='%23141a28'/%3E%3Ccircle cx='39' cy='28' r='3' fill='%23141a28'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <nav><a class="brand" href="#top">Dream Skin Studio</a><a id="github-link" href="#">GitHub 开源</a></nav>
+      <div class="hero" id="top">
+        <p class="eyebrow">皮肤和桌宠，一句话换好</p>
+        <h1>说你想要什么。<br>剩下的交给 Codex。</h1>
+        <p class="lead">第一次复制安装口令；以后只说“我要一套温暖的纸艺皮肤和桌宠”，还可以附上参考链接。</p>
+        <button id="install">复制安装口令</button>
+        <p class="hint">独立非官方 · 开源 · 默认原创安全模式 · 不修改官方安装包</p>
+      </div>
+    </header>
+    <main>
+      <section class="steps">
+        <article><span>1</span><h2>第一次安装</h2><p>把复制的一句话发给 Codex。</p></article>
+        <article><span>2</span><h2>以后直接说</h2><p>选现成套装，或说需求再贴链接。</p></article>
+      </section>
+      <section class="library">
+        <p class="eyebrow">内置原创套装</p>
+        <h2>选一个今天的工作空间</h2>
+        <div class="grid">
+          <article class="card" data-name="晨雾气泡"><div class="preview morning"><i class="orb"></i></div><div><h3>晨雾气泡</h3><p>明亮 · 柔和 · 安静</p><button>就换这个</button></div></article>
+          <article class="card" data-name="夜光苔原"><div class="preview tundra"><i class="critter"></i></div><div><h3>夜光苔原</h3><p>深色 · 专注 · 微光</p><button>就换这个</button></div></article>
+          <article class="card" data-name="纸片轨道站"><div class="preview paper"><i class="bot"></i></div><div><h3>纸片轨道站</h3><p>温暖 · 手作 · 好奇</p><button>就换这个</button></div></article>
+          <article class="card" data-name="拨号聊天室"><div class="preview retro"><i class="signal"></i></div><div><h3>拨号聊天室</h3><p>银灰 · 蓝绿 · 拨号时代</p><button>就换这个</button></div></article>
+        </div>
+      </section>
+      <section class="custom"><div><p class="eyebrow">没有喜欢的？</p><h2>说需求，再贴链接。</h2><p>来源不明确时只参考抽象感觉，自动重新创作背景和桌宠。</p></div><button id="custom">复制示例</button></section>
+    </main>
+    <div class="toast" role="status" aria-live="polite">已复制，发给 Codex 就行</div>
+    <footer><span>Dream Skin Studio</span><span>代码 MIT · 原创素材 CC0</span></footer>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

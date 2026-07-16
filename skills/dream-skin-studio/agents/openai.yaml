@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dream Skin Studio"
+  short_description: "一句话自动创建、检查并换上原创皮肤与配套桌面宠物套装"
+  default_prompt: "Use $dream-skin-studio to 我要一套安静的星空皮肤和桌宠，参考这个链接："

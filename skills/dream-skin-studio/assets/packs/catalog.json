@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "packs": [
+    {
+      "id": "morning-bubbles",
+      "name": "晨雾气泡",
+      "description": "明亮、柔和、有空气感。",
+      "moods": [
+        "bright",
+        "soft",
+        "calm"
+      ],
+      "petId": "mist-orb"
+    },
+    {
+      "id": "luminous-tundra",
+      "name": "夜光苔原",
+      "description": "深色、安静、适合专注。",
+      "moods": [
+        "dark",
+        "focused",
+        "glow"
+      ],
+      "petId": "lumen-critter"
+    },
+    {
+      "id": "paper-orbit",
+      "name": "纸片轨道站",
+      "description": "温暖、手作、带一点好奇心。",
+      "moods": [
+        "warm",
+        "paper",
+        "playful"
+      ],
+      "petId": "paper-bot"
+    },
+    {
+      "id": "dialup-chatroom",
+      "name": "拨号聊天室",
+      "description": "银灰窗口、蓝绿高光和早期桌面通讯软件的怀旧感。",
+      "moods": [
+        "retro",
+        "messenger",
+        "dialup",
+        "pixel"
+      ],
+      "petId": "signal-bubble"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "morning-bubbles",
+  "name": "晨雾气泡",
+  "petId": "mist-orb",
+  "accent": "#84a9ff",
+  "panel": "#eff5ff",
+  "text": "#17233d",
+  "background": "radial-gradient(circle at 18% 22%, #ffffff 0 7%, transparent 24%), radial-gradient(circle at 78% 28%, #ffd9c5 0 8%, transparent 25%), linear-gradient(135deg, #b9e7ff 0%, #e6dcff 48%, #ffe7d0 100%)",
+  "mode": "default"
+}
