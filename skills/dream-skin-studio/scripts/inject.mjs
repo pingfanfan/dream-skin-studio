@@ -11,6 +11,9 @@ const port = Number(option("port", "9473"));
 const once = argv.includes("--once");
 const remove = argv.includes("--remove");
 const printCss = argv.includes("--print-css");
+const verify = argv.includes("--verify");
+const verifyRemoved = argv.includes("--verify-removed");
+const debug = argv.includes("--debug");
 if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("Invalid local port.");
 
 function cssFor(theme) {
@@ -27,6 +30,7 @@ input, textarea, [contenteditable="true"] { background: #ffffffee !important; bo
   return `
 :root { --dream-accent: ${accent}; --dream-panel: ${panel}; --dream-text: ${text}; }
 html, body { background: ${background} !important; color: var(--dream-text) !important; }
+#root, .bg-token-main-surface-primary { background: transparent !important; }
 body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background: ${background}; }
 main, [role="main"] { background: transparent !important; }
 button, [role="button"] { border-color: color-mix(in srgb, var(--dream-accent) 38%, transparent) !important; }
@@ -63,16 +67,17 @@ function expression(css) {
 
 async function evaluate(webSocketUrl, source) {
   if (!/^ws:\/\/(127\.0\.0\.1|localhost):\d+\//.test(webSocketUrl)) throw new Error("Refusing a non-loopback debugger target.");
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     const socket = new WebSocket(webSocketUrl);
     const timer = setTimeout(() => { socket.close(); reject(new Error("CDP timeout")); }, 2500);
     socket.addEventListener("open", () => socket.send(JSON.stringify({ id: 1, method: "Runtime.evaluate", params: { expression: source, returnByValue: true } })));
     socket.addEventListener("message", (event) => {
       const message = JSON.parse(String(event.data));
       if (message.id !== 1) return;
+      if (debug) process.stderr.write(`${JSON.stringify(message)}\n`);
       clearTimeout(timer);
       socket.close();
-      message.error ? reject(new Error(message.error.message)) : resolve();
+      message.error ? reject(new Error(message.error.message)) : resolve(message.result?.result?.value);
     });
     socket.addEventListener("error", () => { clearTimeout(timer); reject(new Error("CDP connection failed")); });
   });
@@ -88,7 +93,28 @@ async function applyOnce() {
   await Promise.all(pages.map((target) => evaluate(target.webSocketDebuggerUrl, expression(css))));
 }
 
-if (once) await applyOnce();
+async function verifyOnce(expectPresent = true) {
+  const response = await fetch(`http://127.0.0.1:${port}/json/list`, { signal: AbortSignal.timeout(1500) });
+  if (!response.ok) throw new Error("Local debugger is unavailable.");
+  const targets = await response.json();
+  const pages = targets.filter((target) => target.type === "page" && target.webSocketDebuggerUrl);
+  if (!pages.length) throw new Error("No Codex page target found.");
+  const source = `(() => { const s=document.getElementById("dream-skin-studio-style"); const root=document.body.firstElementChild; const largeOpaque=[...document.querySelectorAll("*")].flatMap((element)=>{const rect=element.getBoundingClientRect();const style=getComputedStyle(element);if(rect.width<500||rect.height<300||style.backgroundColor==="rgba(0, 0, 0, 0)")return [];return [{tag:element.tagName,id:element.id||"",className:String(element.className||"").slice(0,120),backgroundColor:style.backgroundColor,width:Math.round(rect.width),height:Math.round(rect.height)}]}).slice(0,12); return JSON.stringify({present:Boolean(s),accent:getComputedStyle(document.documentElement).getPropertyValue("--dream-accent").trim(),cssLength:s?.textContent.length||0,bodyBackground:getComputedStyle(document.body).background,rootTag:root?.tagName||"",rootId:root?.id||"",rootBackground:root?getComputedStyle(root).background:"",largeOpaque}) })()`;
+  const values = await Promise.allSettled(pages.map((target) => evaluate(target.webSocketDebuggerUrl, source)));
+  const results = values.flatMap((item) => {
+    if (item.status !== "fulfilled" || typeof item.value !== "string") return [];
+    try { return [JSON.parse(item.value)]; }
+    catch { return []; }
+  });
+  if (!results.length) throw new Error("Theme state could not be read from Codex.");
+  if (expectPresent && !results.some((result) => result.present && result.cssLength > 100)) throw new Error("Theme style is not active in Codex.");
+  if (!expectPresent && results.some((result) => result.present)) throw new Error("Theme style is still active in Codex.");
+  process.stdout.write(`${JSON.stringify(results)}\n`);
+}
+
+if (verify) await verifyOnce(true);
+else if (verifyRemoved) await verifyOnce(false);
+else if (once) await applyOnce();
 else {
   for (;;) {
     try { await applyOnce(); }

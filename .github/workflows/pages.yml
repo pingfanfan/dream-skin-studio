@@ -23,6 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Add verified screenshots
+        run: |
+          mkdir -p site/screenshots
+          cp docs/screenshots/dialup-chatroom-codex.png site/screenshots/
+          cp docs/screenshots/dialup-chatroom-pet.png site/screenshots/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

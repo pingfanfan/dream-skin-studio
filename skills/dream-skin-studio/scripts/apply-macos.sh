@@ -17,9 +17,11 @@ done
 
 prepare_state
 ensure_node
+# Clean up the configuration-only pet selector used by versions before 0.3.
+# The current desktop pet is a real transparent window and needs no Codex
+# configuration key.
+"$NODE" "$SKILL_ROOT/scripts/config-pet.mjs" restore "$CONFIG_PATH" "$PET_BACKUP"
 RESULT="$("$NODE" "$SKILL_ROOT/scripts/pack-tool.mjs" install --packs-root "$PACKS_ROOT" --id "$PACK_ID" --home "$HOME" --state-root "$STATE_ROOT")"
-PET_ID="$("$NODE" -e 'const x=JSON.parse(process.argv[1]);process.stdout.write(x.petId)' "$RESULT")"
-"$NODE" "$SKILL_ROOT/scripts/config-pet.mjs" set "$CONFIG_PATH" "$PET_BACKUP" "$PET_ID"
 [ "$START" = "false" ] || "$SKILL_ROOT/scripts/start-macos.sh"
 NAME="$("$NODE" -e 'const x=JSON.parse(process.argv[1]);process.stdout.write(x.name)' "$RESULT")"
 printf '已换成“%s”，配套桌宠也已启用。\n' "$NAME"

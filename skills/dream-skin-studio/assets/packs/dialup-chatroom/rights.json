@@ -8,6 +8,10 @@
     {
       "path": "pet/spritesheet.png",
       "sha256": "17a7767ef8f5a1fdc3a3ba662b9eac7ac637c6f6860cbd1811f1ff2e574d5449"
+    },
+    {
+      "path": "pet/pet.gif",
+      "sha256": "94173fe70412fff0cd2b389db228e286a4f324ae510056d1ac7b862f07fffdd4"
     }
   ]
 }

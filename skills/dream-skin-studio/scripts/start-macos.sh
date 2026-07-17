@@ -6,7 +6,7 @@ set -euo pipefail
 prepare_state
 find_codex
 
-if /usr/bin/pgrep -f "^${CODEX_EXE}" >/dev/null 2>&1; then
+if [ "${DREAM_SKIN_ALLOW_PARALLEL:-false}" != "true" ] && /usr/bin/pgrep -f "^${CODEX_EXE}" >/dev/null 2>&1; then
   /usr/bin/osascript -e 'tell application id "com.openai.codex" to quit' >/dev/null 2>&1 || true
   for _ in {1..40}; do
     /usr/bin/pgrep -f "^${CODEX_EXE}" >/dev/null 2>&1 || break
@@ -15,12 +15,12 @@ if /usr/bin/pgrep -f "^${CODEX_EXE}" >/dev/null 2>&1; then
   /usr/bin/pgrep -f "^${CODEX_EXE}" >/dev/null 2>&1 && die "Please close Codex once, then repeat your request."
 fi
 
-if [ -f "$STATE_ROOT/injector.pid" ]; then
-  OLD_PID="$(/bin/cat "$STATE_ROOT/injector.pid" 2>/dev/null || true)"
-  case "$OLD_PID" in ''|*[!0-9]*) ;; *) /bin/kill "$OLD_PID" 2>/dev/null || true ;; esac
+OPEN_ARGS=(--remote-debugging-address=127.0.0.1 --remote-debugging-port="$PORT")
+if [ -n "${DREAM_SKIN_USER_DATA_DIR:-}" ]; then
+  /bin/mkdir -p "$DREAM_SKIN_USER_DATA_DIR"
+  OPEN_ARGS+=(--user-data-dir="$DREAM_SKIN_USER_DATA_DIR")
 fi
-
-/usr/bin/open -na "$CODEX_APP" --args --remote-debugging-address=127.0.0.1 --remote-debugging-port="$PORT"
+/usr/bin/open -na "$CODEX_APP" --args "${OPEN_ARGS[@]}"
 READY="false"
 for _ in {1..80}; do
   if /usr/bin/curl --noproxy '*' --silent --fail --max-time 1 "http://127.0.0.1:$PORT/json/version" >/dev/null 2>&1; then READY="true"; break; fi
@@ -28,7 +28,12 @@ for _ in {1..80}; do
 done
 [ "$READY" = "true" ] || die "Codex opened, but the local theme connection was not ready."
 
-/usr/bin/nohup "$CODEX_NODE" "$SKILL_ROOT/scripts/inject.mjs" --state "$STATE_ROOT/selected.json" --port "$PORT" \
-  >"$STATE_ROOT/injector.log" 2>&1 &
-printf '%s\n' "$!" > "$STATE_ROOT/injector.pid"
-/bin/chmod 600 "$STATE_ROOT/injector.pid" "$STATE_ROOT/injector.log"
+INJECTOR_LABEL="com.pingfanfan.dream-skin-studio.injector"
+INJECTOR_DOMAIN="gui/$(/usr/bin/id -u)"
+/bin/launchctl bootout "$INJECTOR_DOMAIN/$INJECTOR_LABEL" >/dev/null 2>&1 || true
+"$CODEX_NODE" "$SKILL_ROOT/scripts/launch-injector.mjs" \
+  --plist "$STATE_ROOT/injector.plist" --node "$CODEX_NODE" --script "$SKILL_ROOT/scripts/inject.mjs" \
+  --state "$STATE_ROOT/selected.json" --port "$PORT" --log "$STATE_ROOT/injector.log" --label "$INJECTOR_LABEL"
+/bin/chmod 600 "$STATE_ROOT/injector.plist" "$STATE_ROOT/injector.log"
+/bin/launchctl bootstrap "$INJECTOR_DOMAIN" "$STATE_ROOT/injector.plist"
+"$SKILL_ROOT/scripts/start-pet-macos.sh"
