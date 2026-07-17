@@ -11,6 +11,12 @@ while IFS= read -r file; do "$NODE" --check "$file" >/dev/null; done < <(/usr/bi
 python3 -c 'import ast,sys; [ast.parse(open(p, encoding="utf-8").read(), filename=p) for p in sys.argv[1:]]' \
   "$SKILL/scripts/build-custom-pack.py" "$ROOT/tools/build_bundled_assets.py"
 "$NODE" "$ROOT/tools/audit.mjs" "$ROOT" >/dev/null
+[ -s "$ROOT/docs/screenshots/dialup-chatroom-codex.png" ]
+[ -s "$ROOT/docs/screenshots/dialup-chatroom-pet.png" ]
+[ -s "$ROOT/docs/USAGE.md" ]
+[ -s "$ROOT/docs/TESTING.md" ]
+/usr/bin/grep -F '请安装这个 Skill，安装完成后告诉我：' "$ROOT/site/app.js" >/dev/null
+/usr/bin/grep -F '请用 Dream Skin Studio 给我换成' "$ROOT/site/app.js" >/dev/null
 
 TMP="$(/usr/bin/mktemp -d /tmp/dream-skin-studio-test.XXXXXX)"
 trap '/bin/rm -rf "$TMP"' EXIT
@@ -24,8 +30,9 @@ LIST="$("$NODE" "$SKILL/scripts/pack-tool.mjs" list --packs-root "$SKILL/assets/
 "$NODE" -e 'const x=JSON.parse(process.argv[1]);if(x.length!==4||!x.some(p=>p.id==="dialup-chatroom"))process.exit(1)' "$LIST"
 
 HOME="$HOME_TEST" NODE="$NODE" "$SKILL/scripts/apply-macos.sh" --id morning-bubbles --no-start >/dev/null
-/usr/bin/grep -q '^pet = "mist-orb"$' "$HOME_TEST/.codex/config.toml"
+/usr/bin/cmp -s "$HOME_TEST/.codex/config.toml" "$TMP/original.toml"
 [ -f "$HOME_TEST/.codex/pets/mist-orb/spritesheet.png" ]
+[ -f "$HOME_TEST/.codex/pets/mist-orb/pet.gif" ]
 [ -f "$STATE/selected.json" ]
 CSS="$("$NODE" "$SKILL/scripts/inject.mjs" --state "$STATE/selected.json" --print-css)"
 case "$CSS" in *'--dream-accent: #84a9ff'*) ;; *) printf 'Theme CSS was not generated.\n' >&2; exit 1 ;; esac
@@ -36,6 +43,9 @@ case "$RETRO_CSS" in *'font-family: Tahoma'*'border-radius: 3px'*) ;; *) printf 
 
 HOME="$HOME_TEST" NODE="$NODE" "$SKILL/scripts/restore-macos.sh" >/dev/null
 /usr/bin/cmp -s "$HOME_TEST/.codex/config.toml" "$TMP/original.toml"
+[ ! -e "$HOME_TEST/.codex/pets/signal-bubble" ]
+[ ! -e "$STATE/selected.json" ]
+[ ! -e "$STATE/active-pack" ]
 
 /bin/cp -R "$SKILL/assets/packs" "$TMP/tampered-packs"
 /usr/bin/printf 'x' >> "$TMP/tampered-packs/morning-bubbles/pet/spritesheet.png"
@@ -44,4 +54,4 @@ if "$NODE" "$SKILL/scripts/pack-tool.mjs" install --packs-root "$TMP/tampered-pa
   exit 1
 fi
 
-printf 'PASS: independent source audit, rights fingerprints, pack install, CSS generation, pet selection, restore, and tamper rejection.\n'
+printf 'PASS: source audit, rights fingerprints, pack install, CSS generation, animated desktop pet, restore, screenshots, documentation, and tamper rejection.\n'

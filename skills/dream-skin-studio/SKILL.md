@@ -19,6 +19,10 @@ node scripts/pack-tool.mjs list --packs-root assets/packs
 For “换一个”, choose a different pack. For “恢复原样”, run
 `scripts/restore-macos.sh`.
 
+After applying, verify the running isolated-page injector reports the selected
+style as present and that the desktop-pet ready record reports a visible
+window. Do this verification yourself; do not turn it into user instructions.
+
 ## Request with a link
 
 Read `references/rights-safety.md` first.
@@ -32,7 +36,10 @@ Read `references/rights-safety.md` first.
    `scripts/build-custom-pack.py` with the generated files, a temporary output
    directory, and `--rights-basis safe-original-generated`.
 5. Run `scripts/apply-macos.sh --packs-root <temporary-output> --id <id>`.
-6. Reply with one short sentence naming the skin and pet and stating that it
+6. Verify that the theme is present and the matching desktop-pet window is
+   visible. If either check fails, report the failure instead of claiming the
+   switch succeeded.
+7. Reply with one short sentence naming the skin and pet and stating that it
    was newly created from abstract inspiration.
 
 If the user explicitly states they created or own the supplied images, allow

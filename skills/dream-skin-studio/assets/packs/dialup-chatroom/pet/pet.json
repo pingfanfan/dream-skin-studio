@@ -1,5 +1,6 @@
 {
   "id": "signal-bubble",
   "displayName": "拨号聊天室搭档",
-  "spritesheetPath": "spritesheet.png"
+  "spritesheetPath": "spritesheet.png",
+  "animationPath": "pet.gif"
 }

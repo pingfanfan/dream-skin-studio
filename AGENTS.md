@@ -13,4 +13,12 @@
 - Keep the nontechnical user flow to one request sentence after Skill install.
 - Do not modify the official Codex application bundle, `app.asar`, or code
   signature.
-- Run `npm test` before publishing.
+- Never publish before `npm test` passes and a real macOS apply/restore loop has
+  passed against a freshly downloaded, correctly signed official Codex app.
+- Real-app QA must use a temporary app copy, isolated HOME, isolated user-data
+  directory, isolated state root, and a dedicated debugging port. Never use or
+  screenshot the user's everyday Codex profile.
+- For UI-affecting changes, refresh the rights-safe screenshots and the dated
+  test record before publishing.
+- Verify all four outcomes: theme CSS present, desktop-pet window visible,
+  restore removes both, and the background service and temporary state are gone.

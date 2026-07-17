@@ -4,6 +4,7 @@
 import argparse
 import hashlib
 import json
+import math
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,6 +48,24 @@ def mascot_atlas(source, destination):
   atlas.save(destination, "PNG", optimize=True)
 
 
+def mascot_animation(source, destination):
+  mascot = load_image(source).convert("RGBA")
+  box = mascot.getchannel("A").getbbox()
+  if not box:
+    raise SystemExit("Mascot image is fully transparent.")
+  mascot = mascot.crop(box)
+  mascot.thumbnail((168, 184), Image.Resampling.LANCZOS)
+  frames = []
+  for frame_index in range(6):
+    frame = Image.new("RGBA", CELL, (0, 0, 0, 0))
+    bob = round(math.sin(frame_index * math.pi / 3) * 4)
+    x = (CELL[0] - mascot.width) // 2
+    y = (CELL[1] - mascot.height) // 2 + bob
+    frame.alpha_composite(mascot, (x, y))
+    frames.append(frame)
+  frames[0].save(destination, "GIF", save_all=True, append_images=frames[1:], duration=180, loop=0, disposal=2, optimize=True)
+
+
 def main():
   parser = argparse.ArgumentParser(description=__doc__)
   parser.add_argument("--background", required=True)
@@ -76,7 +95,9 @@ def main():
   background_path = pack / "background.png"
   background.save(background_path, "PNG", optimize=True)
   atlas_path = pet_dir / "spritesheet.png"
+  animation_path = pet_dir / "pet.gif"
   mascot_atlas(args.pet_image, atlas_path)
+  mascot_animation(args.pet_image, animation_path)
 
   pet_id = f"{args.id}-pet"
   license_id = "CC0-1.0" if args.rights_basis == "safe-original-generated" else "PRIVATE-USER-ASSET"
@@ -92,7 +113,7 @@ def main():
     "background": "linear-gradient(rgba(8,12,20,.42),rgba(8,12,20,.76))",
     "backgroundImage": "background.png",
   })
-  write_json(pet_dir / "pet.json", {"id": pet_id, "displayName": f"{args.name[:60]}搭档", "spritesheetPath": "spritesheet.png"})
+  write_json(pet_dir / "pet.json", {"id": pet_id, "displayName": f"{args.name[:60]}搭档", "spritesheetPath": "spritesheet.png", "animationPath": "pet.gif"})
   write_json(pack / "rights.json", {
     "schemaVersion": 1,
     "status": "approved",
@@ -104,6 +125,7 @@ def main():
     "assets": [
       {"path": "background.png", "sha256": hash_file(background_path)},
       {"path": "pet/spritesheet.png", "sha256": hash_file(atlas_path)},
+      {"path": "pet/pet.gif", "sha256": hash_file(animation_path)},
     ],
   })
   write_json(output / "catalog.json", {"schemaVersion": 1, "packs": [{

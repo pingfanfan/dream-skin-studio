@@ -1,5 +1,6 @@
 {
   "id": "mist-orb",
   "displayName": "晨雾气泡搭档",
-  "spritesheetPath": "spritesheet.png"
+  "spritesheetPath": "spritesheet.png",
+  "animationPath": "pet.gif"
 }

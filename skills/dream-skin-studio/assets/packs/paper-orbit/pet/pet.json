@@ -1,5 +1,6 @@
 {
   "id": "paper-bot",
   "displayName": "纸片轨道站搭档",
-  "spritesheetPath": "spritesheet.png"
+  "spritesheetPath": "spritesheet.png",
+  "animationPath": "pet.gif"
 }
